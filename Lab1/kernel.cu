@@ -4,9 +4,9 @@
 #include "device_launch_parameters.h"
 #include <time.h>
 
-// if N >= 65 535 then error  // попробовал, ошибки почему-то нет!!!
-#define N 6000
-#define SEPARATOR '\n'
+// if N >= 2147483647 then error
+#define N 322
+#define SEPARATOR ','
 
 
 void print_cpu(int n, char separator) {
@@ -36,7 +36,7 @@ __global__ void print_gpu(char separator) {
 
 double count_print_time_using_gpu(int n, char separator) {
 	clock_t begin = clock();
-	print_gpu<<<n, 1>>>(separator); // 65535 блоков, 1 нить
+	print_gpu<<<n, 1>>>(separator); // n блоков, 1 нить
 	cudaDeviceReset();
 	clock_t end = clock();
 	return (double)(end - begin) / CLOCKS_PER_SEC;
@@ -46,12 +46,12 @@ double count_print_time_using_gpu(int n, char separator) {
 int main(void) {
 	//printf("\nPress 'Enter' to write numbers using CPU..\n");
 	//getchar();
-	double cpu_printing_time = count_print_time_using_cpu(N, SEPARATOR);
+	//double cpu_printing_time = count_print_time_using_cpu(N, SEPARATOR);
 	printf("\nPress 'Enter' to write numbers using GPU..\n");
 	//getchar();
 	double gpu_printing_time = count_print_time_using_gpu(N, SEPARATOR);
 	printf("\n\n----------------------------------------------------\n Parameters:\n\tN = %d\n\tSEPARATOR = '%c'\n-------------\n Results:\n", N, SEPARATOR);
-	printf("\tPrinting time using CPU took %.2f seconds\n", cpu_printing_time);
+	//printf("\tPrinting time using CPU took %.2f seconds\n", cpu_printing_time);
 	printf("\tPrinting time using GPU took %.2f seconds\n----------------------------------------------------\n", gpu_printing_time);
 	printf("\nWow!!\n");
 }
